@@ -116,6 +116,18 @@ nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-
 .near-rhymes .syb-7 { color: #C5C200; background:#363500; }
 .near-rhymes .syb-8 { color: #9B9900; background:#363500; }
 
+.synonyms {  }
+
+.synonyms .syb-1 { color: #A5EF00; background:#363500; }
+.synonyms .syb-2 { color: #C5F35F; background:#363500; }
+.synonyms .syb-3 { color: #D4D11C; background:#363500; }
+.synonyms .syb-4 { color: #B6F036; background:#363500; }
+.synonyms .syb-5 { color: #7FB900; background:#363500; }
+.synonyms .syb-6 { color: #649100; background:#363500; }
+.synonyms .syb-7 { color: #C5C200; background:#363500; }
+.synonyms .syb-8 { color: #9B9900; background:#363500; }
+
+
 #words span { color: #000000; }
 
       .cm-matchhighlight {background-color: lightgreen}
@@ -128,7 +140,7 @@ nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-
     <body>
     <div class="container">
       <div class="row">
-        <div class="col-12-s col-4-l">
+        <div class="col-12-s col-3-l">
           <form>
            <textarea name="q" id="lyrics"></textarea>
           </form>
@@ -137,9 +149,11 @@ nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-
           <div id="words"></div>
           <div id="bars"></div>
         </div>
-        <div class="col-12-s col-4-l rhymes" id="rhy">
+        <div class="col-12-s col-3-l rhymes" id="rhy">
         </div>
-        <div class="col-12-s col-4-l near-rhymes" id="nry">
+        <div class="col-12-s col-3-l near-rhymes" id="nry">
+        </div>
+        <div class="col-12-s col-3-l synonyms" id="syn">
         </div>
         
       </div>
@@ -254,10 +268,14 @@ function near(word, cb) {
   q("words", "rel_nry=" + word, cb);
 }
 
+function syno(word, cb) {
+  q("words", "ml=" + word, cb);
+}
 
 var inp = document.querySelector("textarea[name=q]");
 var rhy = document.querySelector("#rhy");
 var nry = document.querySelector("#nry");
+var syn = document.querySelector("#syn");
 
 CodeMirror.registerHelper("hint", "ajax", function (cm, cb, opt) {
   var cursor = cm.getCursor(), line = cm.getLine(cursor.line)
@@ -341,6 +359,21 @@ cm.on('cursorActivity', function(){
             });
           }
           nry.innerHTML = html.join('');
+          blockCursorAct = false;
+        } catch (e) {
+          console.error(e);
+          blockCursorAct = false;
+        }            
+      });
+      syno(word, function(rhymes) {
+        try {
+          var html = [];
+          if (Array.isArray(rhymes)) {
+            rhymes.forEach(function(r){
+              html.push('<span class="syb-'+r.sy+'">'+r.wd+'</span>\n');    
+            });
+          }
+          syn.innerHTML = html.join('');
           blockCursorAct = false;
         } catch (e) {
           console.error(e);
