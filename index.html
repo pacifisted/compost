@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/theme/material.css" />
         
         <style>
-html,body {height: 100%;width: 100%;margin: 0;padding: 0;left: 0;top: 0;font-size: 100%; background:#263238;}
+html,body {height: 100%;width: 100%;margin: 0;padding: 0;left: 0;top: 0;font-size: 100%; background:#132027;}
 * {font-family: 'Lato', Helvetica, sans-serif; color:#77D3FF;line-height: 1.5;font-size: 0.8rem;}
 ol, ul {margin:0;padding:0;list-style: none;}
 a {text-decoration: none;}
@@ -116,6 +116,7 @@ nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-
 .near-rhymes .syb-7 { color: #C5C200; background:#363500; }
 .near-rhymes .syb-8 { color: #9B9900; background:#363500; }
 
+#words span { color: #000000; }
 
       .cm-matchhighlight {background-color: lightgreen}
       .CodeMirror-selection-highlight-scrollbar {background-color: green}
@@ -129,8 +130,12 @@ nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-
       <div class="row">
         <div class="col-12-s col-4-l">
           <form>
-           <textarea name="q"></textarea>
+           <textarea name="q" id="lyrics"></textarea>
           </form>
+          <div class="tunes" id="tunes-userviz"></div>
+          <div class="tunes" id="tunes-userviz-error" class="hidden"></div>
+          <div id="words"></div>
+          <div id="bars"></div>
         </div>
         <div class="col-12-s col-4-l rhymes" id="rhy">
         </div>
@@ -140,10 +145,29 @@ nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-
       </div>
     </div>
 
+    <script id="text-viz" type="text/jst">
+        <% _.each(sentences,function(sentence){ %>
+            <div>
+            <% _.each(sentence,function(word,wi){ %>
+                <span>
+                  <% _.each(word[1],function(syl,si){ %><span data-label="<%= word[0][si].label() %>" data-sounds="<%= word[0][si].sounds.join('-') %>" data-color="<%= word[0][si].color %>" style="background-color:<%= colors[word[0][si].color] %>;"><%= syl %></span><% }); %>
+                </span>
+            <% }); %>
+            </div>
+        <% }); %>
+    </script>
+
+    <script id="bar-viz" type="text/jst">
+<% _.each(groups,function(g,i){ %><div style="height:<%= dim %>px"><% _.each(syls,function(syl){ %><span class="block" style="background-color:<%= syl.color == g || syl.color == '*' ? colors[syl.color] : '#eee' %>;width:<%= dim %>px;height:<%= dim %>px;"></span><% }); %></div><% }); %>
+    </script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/codemirror.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/addon/hint/show-hint.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/mode/markdown/markdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsnetworkx/0.3.4/jsnetworkx.js"></script>
+<script src="js/compost.js"></script>
 
     <script>
 
@@ -232,7 +256,6 @@ CodeMirror.registerHelper("hint", "ajax", function (cm, cb, opt) {
   var word = line.slice(start, end).toLowerCase();
 
   if (word) {
-    console.log(word);
     q("sug", "s=" + word, function(list) {
       try {
         cb({
@@ -261,8 +284,11 @@ var cm = CodeMirror.fromTextArea(inp, {
 
 // Local backup...
 cm.setValue(localStorage.doc || "")
-cm.on("change", function(){
+RAP.analyze(-1);
+
+cm.on("changes", function(){
   localStorage.doc = cm.getValue();
+  RAP.analyze(-1);
 });
 
 var blockCursorAct = false;
@@ -280,7 +306,6 @@ cm.on('cursorActivity', function(){
   if (word && !blockCursorAct) {
     blockCursorAct = true;
     setTimeout(function() {
-      console.log(word);
       rhymes(word, function(rhymes) {
         try {
           var html = [];
