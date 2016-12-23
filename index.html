@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>compost</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/codemirror.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/addon/hint/show-hint.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/theme/material.css" />
+        
+        <style>
+html,body {height: 100%;width: 100%;margin: 0;padding: 0;left: 0;top: 0;font-size: 100%; background:#263238;}
+* {font-family: 'Lato', Helvetica, sans-serif; color:#77D3FF;line-height: 1.5;font-size: 0.8rem;}
+ol, ul {margin:0;padding:0;list-style: none;}
+a {text-decoration: none;}
+h1 {font-size: 1.5rem;margin:0.7rem 0;}
+h2, .bigtxt {font-size: 1.1rem;margin:.6rem 0;}
+h3 {font-size: 1rem;margin:.6rem 0;}
+h4, .midtxt {font-size: 0.8rem;margin:.4rem 0;}
+h5 {font-size: 0.6rem;margin:.4rem 0;}
+h6, .btxt {font-size: 0.5rem;margin:.4rem 0;}
+p {line-height: 1.8;}
+.left-align {text-align: left;}
+.left {float: left;}
+.right-align {text-align: right;}
+.right {float: right;}
+.center-align {text-align: center;margin-left: auto;margin-right: auto;}
+.justify {text-align: justify;}
+/* Layout */
+.container {width: 90%;margin-left: auto;margin-right: auto;}
+.row {position: relative; width: 100%;}
+.row [class^="col"] {float: left;margin: 0.5rem 2%;min-height: 0.125rem;}
+.col-1-s,.col-2-s,.col-3-s,.col-4-s,.col-5-s,.col-6-s,.col-7-s,.col-8-s,.col-9-s,.col-10-s,.col-11-s,.col-12-s {width: 96%;}
+.s-show, .m-show, .l-show {display:none}
+@media only screen and (min-width: 320px) {
+.col-1-s {width: 4.33%;}.col-2-s {width: 12.66%;}
+.col-3-s {width: 21%;}
+.col-4-s {width: 29.33%;}
+.col-5-s {width: 37.66%;}
+.col-6-s {width: 46%;}
+.col-7-s {width: 54.33%;}
+.col-8-s {width: 62.66%;}
+.col-9-s {width: 71%;}
+.col-10-s {width: 79.33%;}
+.col-11-s {width: 87.66%;}
+.col-12-s {width: 96%;}
+.s-show{display:block;}
+}
+@media only screen and (min-width: 601px) {
+.col-1-m {width: 4.33%;}
+.col-2-m {width: 12.66%;}
+.col-3-m {width: 21%;}
+.col-4-m {width: 29.33%;}
+.col-5-m {width: 37.66%;}
+.col-6-m {width: 46%;}
+.col-7-m {width: 54.33%;}
+.col-8-m {width: 62.66%;}
+.col-9-m {width: 71%;}
+.col-10-m {width: 79.33%;}
+.col-11-m {width: 87.66%;}
+.col-12-m {width: 96%;}
+.m-show{display:block}
+}
+@media only screen and (min-width: 993px) {
+.col-1-l {width: 4.33%;}
+.col-2-l {width: 12.66%;}
+.col-3-l {width: 21%;}
+.col-4-l {width: 29.33%;}
+.col-5-l {width: 37.66%;}
+.col-6-l {width: 46%;}
+.col-7-l {width: 54.33%;}
+.col-8-l {width: 62.66%;}
+.col-9-l {width: 71%;}
+.col-10-l {width: 79.33%;}
+.col-11-l {width: 87.66%;}
+.col-12-l {width: 96%;}
+.l-show{display:block;}
+}
+.row::after {content: "";display: table;clear: both;}
+/* Footer */
+footer {margin-top: 20px;padding-top: 20px;background-color: #e8e8e8;}
+footer .footer-nav a {color: #700000;display: block;font-size: 14px; font-weight: 500;height: 48px;line-height: 48px;}
+footer .copyright {overflow: hidden;height: 50px;line-height: 50px;color: #FFFFFF;background-color: #a1181f;}
+footer .copyright span {color: #FFFFFF;font-size:0.6rem;line-height: 1.2rem;}
+footer .copyright a {color: #FFFFFF;display:block;height: 50px;padding: 0 5px;font-size:0.6rem;line-height: 1.2rem;}
+footer .copyright i {color: #FFFFFF;line-height: 40px;}
+/* Diverse */
+.card {margin: 0 0 1rem 0;}
+nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);}
+.btn{border: none;border-radius: 2px;display: inline-block;height: 36px;line-height: 36px;padding: 0 1rem;vertical-align: middle;text-decoration: none;text-align: center;letter-spacing: .5px;outline: 0;background: #FFFFFF;}
+.btn i {font-size: 1.3rem;line-height: inherit;}       
+
+
+.rhymes {  }
+
+.rhymes .syb-1 { color: #AFAD0B; background:#363500; }
+.rhymes .syb-2 { color: #E3E148; background:#363500; }
+.rhymes .syb-3 { color: #D4D11C; background:#363500; }
+.rhymes .syb-4 { color: #FFFC00; background:#363500; }
+.rhymes .syb-5 { color: #FFFD63; background:#363500; }
+.rhymes .syb-6 { color: #FFFC39; background:#363500; }
+.rhymes .syb-7 { color: #C5C200; background:#363500; }
+.rhymes .syb-8 { color: #9B9900; background:#363500; }
+
+.near-rhymes {  }
+
+.near-rhymes .syb-1 { color: #A5EF00; background:#363500; }
+.near-rhymes .syb-2 { color: #C5F35F; background:#363500; }
+.near-rhymes .syb-3 { color: #D4D11C; background:#363500; }
+.near-rhymes .syb-4 { color: #B6F036; background:#363500; }
+.near-rhymes .syb-5 { color: #7FB900; background:#363500; }
+.near-rhymes .syb-6 { color: #649100; background:#363500; }
+.near-rhymes .syb-7 { color: #C5C200; background:#363500; }
+.near-rhymes .syb-8 { color: #9B9900; background:#363500; }
+
+
+      .cm-matchhighlight {background-color: lightgreen}
+      .CodeMirror-selection-highlight-scrollbar {background-color: green}
+    
+        
+        </style>
+        
+    </head>
+    <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-12-s col-4-l">
+          <form>
+           <textarea name="q"></textarea>
+          </form>
+        </div>
+        <div class="col-12-s col-4-l rhymes" id="rhy">
+        </div>
+        <div class="col-12-s col-4-l near-rhymes" id="nry">
+        </div>
+        
+      </div>
+    </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/codemirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/addon/hint/show-hint.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/mode/markdown/markdown.min.js"></script>
+
+    <script>
+
+function p(res) {
+  var out = [];
+  if (Array.isArray(res)) {
+    res.forEach(function(i) {
+      var w = {
+        wd: i.word,
+        sc: i.score,
+        sy: i.numSyllables,
+        ps: [],
+        pr: []
+      }
+      i.tags.forEach(function(t){
+        var s = t.split(":");
+        if (s.length > 1) {
+          if (s[0] === "pron") {
+            w.pr = s[1].trim().split(" ");
+          } else if (s[0] === "f") {
+            w.fr = parseFloat(s[1]);
+          }
+        } else {
+          w.ps.push(t);
+        }
+      });
+      out.push(w);
+    });
+  }
+  return out;
+}    
+
+function q(type, query, cb) {
+  var url = 'https://api.datamuse.com/'+ type +'?' + query;
+  if (type === "words") {
+    url = url + "&md=srfp";
+    if (localStorage[query])  {
+      cb(JSON.parse(localStorage[query]));
+      return;
+    }
+  }
+  var xhr = new XMLHttpRequest();
+  if ("withCredentials" in xhr) {
+    xhr.open("GET", url, true);
+  } else if (typeof XDomainRequest != "undefined") {
+    xhr = new XDomainRequest();
+    xhr.open(method, url);
+  } else {
+    console.error("CORS not supported!");
+    return;
+  }
+  xhr.onload = function() {
+    if (type === "words"){
+      var words = p(JSON.parse(xhr.responseText));
+      localStorage[query] = JSON.stringify(words);
+      cb(words);
+    } else {
+      cb(JSON.parse(xhr.responseText).map(function(i){return i.word}));
+    }
+    
+  };
+  xhr.onerror = function() {
+    console.error("Error accessing the Datamuse API");
+  };
+  xhr.send();
+}
+
+function rhymes(word, cb) {
+  q("words", "rel_rhy=" + word, cb);
+}
+
+function near(word, cb) {
+  q("words", "rel_nry=" + word, cb);
+}
+
+
+var inp = document.querySelector("textarea[name=q]");
+var rhy = document.querySelector("#rhy");
+var nry = document.querySelector("#nry");
+
+CodeMirror.registerHelper("hint", "ajax", function (cm, cb, opt) {
+  var cursor = cm.getCursor(), line = cm.getLine(cursor.line)
+  var start = cursor.ch, end = cursor.ch
+  while (start && /\w/.test(line.charAt(start - 1))) --start
+  while (end < line.length && /\w/.test(line.charAt(end))) ++end
+  var word = line.slice(start, end).toLowerCase();
+
+  if (word) {
+    console.log(word);
+    q("sug", "s=" + word, function(list) {
+      try {
+        cb({
+          list: list,
+          from: CodeMirror.Pos(cursor.line, start),
+          to: CodeMirror.Pos(cursor.line, end)
+        });
+      } catch (e) {
+        logger.error(e);
+      }            
+    });
+  }
+});
+
+CodeMirror.registerHelper("hint", "auto", function (mirror, options) {
+  CodeMirror.commands.autocomplete(mirror, CodeMirror.hint.ajax, { async: true })
+});
+
+var cm = CodeMirror.fromTextArea(inp, {
+    extraKeys: {"Ctrl-Space": "autocomplete"},
+    lineWrapping: true,
+    mode: "text/x-markdown",
+    theme: "material",
+    hintOptions: {hint: CodeMirror.hint.auto}
+});
+
+// Local backup...
+cm.setValue(localStorage.doc || "")
+cm.on("change", function(){
+  localStorage.doc = cm.getValue();
+});
+
+var blockCursorAct = false;
+cm.on("keydown", function(){
+  blockCursorAct = true;
+  setTimeout(function() {
+    blockCursorAct = false;
+  },100)
+});
+
+
+cm.on('cursorActivity', function(){
+  var wordPos = cm.findWordAt(cm.getCursor());
+  var word = cm.getRange(wordPos.anchor, wordPos.head).trim();
+  if (word && !blockCursorAct) {
+    blockCursorAct = true;
+    setTimeout(function() {
+      console.log(word);
+      rhymes(word, function(rhymes) {
+        try {
+          var html = [];
+          if (Array.isArray(rhymes)) {
+            rhymes.forEach(function(r){
+              html.push('<span class="syb-'+r.sy+'">'+r.wd+'</span>\n');    
+            });
+          }
+          rhy.innerHTML = html.join('');
+          blockCursorAct = false;
+        } catch (e) {
+          console.error(e);
+          blockCursorAct = false;
+        }            
+      });
+      near(word, function(rhymes) {
+        try {
+          var html = [];
+          if (Array.isArray(rhymes)) {
+            rhymes.forEach(function(r){
+              html.push('<span class="syb-'+r.sy+'">'+r.wd+'</span>\n');    
+            });
+          }
+          nry.innerHTML = html.join('');
+          blockCursorAct = false;
+        } catch (e) {
+          console.error(e);
+          blockCursorAct = false;
+        }            
+      });
+    },100)
+  }
+});
+
+
+
+    </script>
+    
+    </body>
+</html>
