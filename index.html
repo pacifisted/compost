@@ -171,6 +171,17 @@ nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-
 
     <script>
 
+function debounce(fn, delay) {
+  var timer = null;
+  return function () {
+    var context = this, args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      fn.apply(context, args);
+    }, delay);
+  };
+}
+
 function p(res) {
   var out = [];
   if (Array.isArray(res)) {
@@ -286,10 +297,10 @@ var cm = CodeMirror.fromTextArea(inp, {
 cm.setValue(localStorage.doc || "")
 RAP.analyze(-1);
 
-cm.on("changes", function(){
+cm.on("changes",debounce(function(){
   localStorage.doc = cm.getValue();
   RAP.analyze(-1);
-});
+},250));
 
 var blockCursorAct = false;
 cm.on("keydown", function(){
