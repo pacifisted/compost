@@ -34,7 +34,8 @@ p {line-height: 1.8;}
 .row {position: relative; width: 100%;}
 .row [class^="col"] {float: left;margin: 0.5rem 2%;min-height: 0.125rem;}
 .col-1-s,.col-2-s,.col-3-s,.col-4-s,.col-5-s,.col-6-s,.col-7-s,.col-8-s,.col-9-s,.col-10-s,.col-11-s,.col-12-s {width: 96%;}
-.s-show, .m-show, .l-show {display:none}
+.s-show, .m-show, .l-show {display:none;}
+.s-hide, .m-hide {display:block;}
 @media only screen and (min-width: 320px) {
 .col-1-s {width: 4.33%;}.col-2-s {width: 12.66%;}
 .col-3-s {width: 21%;}
@@ -47,8 +48,8 @@ p {line-height: 1.8;}
 .col-10-s {width: 79.33%;}
 .col-11-s {width: 87.66%;}
 .col-12-s {width: 96%;}
-.s-show{display:block;}
 }
+
 @media only screen and (min-width: 601px) {
 .col-1-m {width: 4.33%;}
 .col-2-m {width: 12.66%;}
@@ -62,8 +63,12 @@ p {line-height: 1.8;}
 .col-10-m {width: 79.33%;}
 .col-11-m {width: 87.66%;}
 .col-12-m {width: 96%;}
-.m-show{display:block}
 }
+@media only screen and (max-width: 993px) {
+.s-hide {display:none;}
+.s-show {display:block;}
+}
+
 @media only screen and (min-width: 993px) {
 .col-1-l {width: 4.33%;}
 .col-2-l {width: 12.66%;}
@@ -77,7 +82,6 @@ p {line-height: 1.8;}
 .col-10-l {width: 79.33%;}
 .col-11-l {width: 87.66%;}
 .col-12-l {width: 96%;}
-.l-show{display:block;}
 }
 .row::after {content: "";display: table;clear: both;}
 /* Footer */
@@ -93,6 +97,7 @@ nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-
 .btn{border: none;border-radius: 2px;display: inline-block;height: 36px;line-height: 36px;padding: 0 1rem;vertical-align: middle;text-decoration: none;text-align: center;letter-spacing: .5px;outline: 0;background: #FFFFFF;}
 .btn i {font-size: 1.3rem;line-height: inherit;}       
 
+.num-syllables {margin: 0 0 0 5px;}
 
 .rhymes {  }
 
@@ -134,56 +139,35 @@ nav, .card-panel, .card, .toast, .btn, .side-nav, .pagination li a, footer {box-
       .CodeMirror-selection-highlight-scrollbar {background-color: green}
     
         
-        </style>
+</style>
         
     </head>
     <body>
     <div class="container">
+      <div class="row center-align">
+        <h3>compost</h3>
+      </div>
       <div class="row">
-        <div class="col-12-s col-3-l">
+        <div class="col-12-s col-4-l rhymes s-hide justify" id="rhy"></div>
+        <div class="col-12-s col-4-l">
           <form>
            <textarea name="q" id="lyrics"></textarea>
           </form>
-          <div class="tunes" id="tunes-userviz"></div>
-          <div class="tunes" id="tunes-userviz-error" class="hidden"></div>
-          <div id="words"></div>
-          <div id="bars"></div>
         </div>
-        <div class="col-12-s col-3-l rhymes" id="rhy">
-        </div>
-        <div class="col-12-s col-3-l near-rhymes" id="nry">
-        </div>
-        <div class="col-12-s col-3-l synonyms" id="syn">
-        </div>
-        
+        <div class="col-12-s col-4-l rhymes s-show justify" id="rhy2"></div>
+        <div class="col-12-s col-4-l near-rhymes justify" id="nry"></div>
+      </div>
+      <div class="row">
+        <div class="col-12-s col-4-l synonyms justify" id="syn"></div>
       </div>
     </div>
 
-    <script id="text-viz" type="text/jst">
-        <% _.each(sentences,function(sentence){ %>
-            <div>
-            <% _.each(sentence,function(word,wi){ %>
-                <span>
-                  <% _.each(word[1],function(syl,si){ %><span data-label="<%= word[0][si].label() %>" data-sounds="<%= word[0][si].sounds.join('-') %>" data-color="<%= word[0][si].color %>" style="background-color:<%= colors[word[0][si].color] %>;"><%= syl %></span><% }); %>
-                </span>
-            <% }); %>
-            </div>
-        <% }); %>
-    </script>
-
-    <script id="bar-viz" type="text/jst">
-<% _.each(groups,function(g,i){ %><div style="height:<%= dim %>px"><% _.each(syls,function(syl){ %><span class="block" style="background-color:<%= syl.color == g || syl.color == '*' ? colors[syl.color] : '#eee' %>;width:<%= dim %>px;height:<%= dim %>px;"></span><% }); %></div><% }); %>
-    </script>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/codemirror.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/addon/hint/show-hint.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/mode/markdown/markdown.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsnetworkx/0.3.4/jsnetworkx.js"></script>
-<script src="js/compost.js"></script>
-
-    <script>
+<script>
 
 function debounce(fn, delay) {
   var timer = null;
@@ -272,8 +256,13 @@ function syno(word, cb) {
   q("words", "ml=" + word, cb);
 }
 
+function syl(line, cb) {
+  q("words", "&qe=sp&max=1&sp=" + encodeURIComponent(line), cb);
+}
+
 var inp = document.querySelector("textarea[name=q]");
 var rhy = document.querySelector("#rhy");
+var rhy2 = document.querySelector("#rhy2");
 var nry = document.querySelector("#nry");
 var syn = document.querySelector("#syn");
 
@@ -304,8 +293,11 @@ CodeMirror.registerHelper("hint", "auto", function (mirror, options) {
 });
 
 var cm = CodeMirror.fromTextArea(inp, {
+    gutters:["num-syllables"],
     extraKeys: {"Ctrl-Space": "autocomplete"},
     lineWrapping: true,
+    lineNumbers: true,
+    lineNumberFormatter:function(){return ""},
     mode: "text/x-markdown",
     theme: "material",
     hintOptions: {hint: CodeMirror.hint.auto}
@@ -313,11 +305,10 @@ var cm = CodeMirror.fromTextArea(inp, {
 
 // Local backup...
 cm.setValue(localStorage.doc || "")
-RAP.analyze(-1);
 
 cm.on("changes",debounce(function(){
   localStorage.doc = cm.getValue();
-  RAP.analyze(-1);
+  updateNumSyllables();
 },250));
 
 var blockCursorAct = false;
@@ -343,7 +334,7 @@ cm.on('cursorActivity', function(){
               html.push('<span class="syb-'+r.sy+'">'+r.wd+'</span>\n');    
             });
           }
-          rhy.innerHTML = html.join('');
+          rhy.innerHTML = rhy2.innerHTML = html.join('');
           blockCursorAct = false;
         } catch (e) {
           console.error(e);
@@ -384,8 +375,26 @@ cm.on('cursorActivity', function(){
   }
 });
 
-
-
+function updateNumSyllables() {
+  cm.eachLine(function(line) {
+    var s = document.createElement("span");
+    s.className = "num-syllables";
+    if (line.text) {
+      syl(line.text, function(res){
+        var numSyl = 0;
+        if (res && res.length) {
+          var w = res[0];
+          numSyl = w.sy;
+        }
+        s.innerHTML = numSyl;
+      });
+    } else {
+      s.innerHTML = "0";
+    }
+    cm.setGutterMarker(line, "num-syllables", s);
+  });
+}
+ 
     </script>
     
     </body>
